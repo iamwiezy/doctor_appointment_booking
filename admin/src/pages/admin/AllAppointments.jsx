@@ -1,21 +1,28 @@
-import React from "react";
-import { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AdminContext } from "../../context/AdminContext";
-import { useEffect } from "react";
+import { AppContext } from "../../context/AppContext";
+import { assets } from "../../assets/assets";
 
 const AllAppointments = () => {
-  const { aToken, appointments, getAllAppointments } = useContext(AdminContext);
+  const { aToken, appointments, getAllAppointments, cancelAppointment } =
+    useContext(AdminContext);
+  const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
 
   useEffect(() => {
     if (aToken) {
       getAllAppointments();
     }
   }, [aToken]);
+
   return (
-    <div className="w-full max-w-6xl m-5">
-      <p className="mb-3 text-lg font-medium ">All Appointments</p>
-      <div className="bg-white border rounded text-sm max-h-[80vh] overflow-y-scroll min-h-[60vh]">
-        <div className="hidden sm:grid gird-cols-[0.5fr_3fr_1fr_3fr_3fr_1fr_1fr] grid-flow-col py-3 px-6 border-bottom">
+    <div className="w-full max-w-6xl mx-auto my-6">
+      <h2 className="mb-5 text-xl font-semibold text-zinc-800">
+        All Appointments
+      </h2>
+
+      <div className="bg-white shadow-md rounded-lg text-sm max-h-[80vh] overflow-y-auto border border-zinc-200">
+        {/* Header */}
+        <div className="hidden sm:grid grid-cols-[0.5fr_2.5fr_1fr_2fr_2.5fr_1fr_1fr] px-6 py-3 text-zinc-500 font-medium border-b bg-zinc-50">
           <p>#</p>
           <p>Patient</p>
           <p>Age</p>
@@ -24,23 +31,75 @@ const AllAppointments = () => {
           <p>Fees</p>
           <p>Actions</p>
         </div>
-        {appointments.map((item, index) => (
-          <div
-            className="flex flex-wrap justify-between max-sm:gap-2 sm:grid sm:grid-cols-[0.5fr_3fr_1fr_3fr_3fr_1fr_1fr] text-gray-500 py-3 px-6 border-b hover:bg-gray-50"
-            key={index}
-          >
-            <p className="max-sm:hidden">{index + 1}</p>
-            <div className="flex items-center gap-2">
-              {" "}
-              <img
-                className="w-8 rounded-full"
-                src={item.userData.image}
-                alt=""
-              />{" "}
-              <p>{item.userData.name}</p>
-            </div>
+
+        {/* Empty State */}
+        {appointments.length === 0 ? (
+          <div className="p-6 text-center text-zinc-500">
+            No appointments available.
           </div>
-        ))}
+        ) : (
+          appointments.map((item, index) => (
+            <div
+              key={item._id || index}
+              className="flex flex-wrap justify-between items-center sm:grid sm:grid-cols-[0.5fr_2.5fr_1fr_2fr_2.5fr_1fr_1fr] px-6 py-4 text-zinc-600 border-b hover:bg-zinc-50 transition"
+            >
+              <p className="max-sm:hidden">{index + 1}</p>
+
+              <div className="flex items-center gap-3">
+                <img
+                  className="w-8 h-8 rounded-full object-cover"
+                  src={item?.userData?.image || ""}
+                  alt="patient"
+                />
+                <span className="font-medium text-zinc-700">
+                  {item?.userData?.name || "Unknown"}
+                </span>
+              </div>
+
+              <p className="max-sm:hidden">
+                {calculateAge(item?.userData?.dob) || "-"}
+              </p>
+
+              <p>
+                {slotDateFormat(item?.slotDate) || "-"}, {item?.slotTime || "-"}
+              </p>
+
+              <div className="flex items-center gap-3">
+                <img
+                  className="w-8 h-8 rounded-full bg-gray-100 object-cover"
+                  src={item?.docData?.image || ""}
+                  alt="doctor"
+                />
+                <span className="font-medium text-zinc-700">
+                  {item?.docData?.name || "Unknown"}
+                </span>
+              </div>
+
+              <p className="font-semibold text-zinc-700">
+                {currency} {item?.docData?.fees || "0"}
+              </p>
+
+              {/* Cancel Button or Cancelled Status */}
+              {item?.cancelled ? (
+                <span className="text-red-500 font-medium text-sm">
+                  Cancelled
+                </span>
+              ) : (
+                <button
+                  onClick={() => cancelAppointment(item._id)} // ✅ Wrapped in arrow function
+                  className="p-2 hover:bg-red-100 rounded-full transition"
+                  title="Cancel Appointment"
+                >
+                  <img
+                    src={assets.cancel_icon}
+                    alt="Cancel"
+                    className="w-5 h-5"
+                  />
+                </button>
+              )}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

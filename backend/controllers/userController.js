@@ -245,9 +245,13 @@ const cancelAppointment = async (req, res) => {
   }
 };
 
+// const razorpayInstance = new razorpay({
+//   key_id: "",
+//   key_secret: "",
+// });
 // API for razorpay payment integration
 
-const paymentRazorpay = async (req, res) => {};
+// const paymentRazorpay = async (req, res) => {};
 export {
   registerUser,
   loginUser,
