@@ -1,32 +1,46 @@
 import React, { useContext, useState } from "react";
-import { assets } from "../assets/assets";
 import { AdminContext } from "../context/AdminContext";
+import { DoctorContext } from "../context/DoctorContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [state, setState] = useState("Admin");
+  const [userRole, setUserRole] = useState("Admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setAtoken, backendUrl } = useContext(AdminContext);
+  const { setAtoken } = useContext(AdminContext);
+  const { setDToken } = useContext(DoctorContext);
+  const navigate = useNavigate();
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     try {
-      if (state === "Admin") {
-        const { data } = await axios.post(backendUrl + "/api/admin/login", {
-          email,
-          password,
-        });
-        if (data.success) {
-          console.log(data.token);
-          localStorage.setItem("atoken", data.token);
+      const endpoint =
+        userRole === "Admin"
+          ? `${backendUrl}/api/admin/login`
+          : `${backendUrl}/api/doctor/login`;
+
+      const { data } = await axios.post(endpoint, { email, password });
+
+      if (data.success) {
+        const tokenKey = userRole === "Admin" ? "atoken" : "dToken";
+        localStorage.setItem(tokenKey, data.token);
+
+        if (userRole === "Admin") {
           setAtoken(data.token);
+          navigate("/admin/dashboard");
         } else {
-          toast.error(data.message);
+          setDToken(data.token);
+          navigate("/doctor/dashboard");
         }
+
+        toast.success("Login successful!");
       } else {
+        toast.error(data.message);
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -36,14 +50,14 @@ const Login = () => {
 
   return (
     <form onSubmit={onSubmitHandler} className="min-h-[80vh] flex items-center">
-      <div className="flex flex-col gap-3 m-auto items-start p-8 mmin-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] trxt-sm shadow-lg">
+      <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg">
         <p className="text-2xl font-semibold m-auto">
-          <span className="text-primary">{state}</span> Login
+          <span className="text-primary">{userRole}</span> Login
         </p>
         <div className="w-full">
           <p>Email</p>
           <input
-            className="border border-[#DADADA] rounded w-full p-2 mt-1 "
+            className="border border-[#DADADA] rounded w-full p-2 mt-1"
             type="email"
             required
             onChange={(e) => setEmail(e.target.value)}
@@ -53,7 +67,7 @@ const Login = () => {
         <div className="w-full">
           <p>Password</p>
           <input
-            className="border border-[#DADADA] rounded w-full p-2 mt-1 "
+            className="border border-[#DADADA] rounded w-full p-2 mt-1"
             type="password"
             required
             onChange={(e) => setPassword(e.target.value)}
@@ -63,27 +77,17 @@ const Login = () => {
         <button className="bg-primary text-white w-full py-2 rounded-md text-base">
           Login
         </button>
-        {state === "Admin" ? (
-          <p>
-            Doctor Login?{" "}
-            <span
-              className="text-primary underline cursor-pointer"
-              onClick={() => setState("Doctor")}
-            >
-              Click here
-            </span>{" "}
-          </p>
-        ) : (
-          <p>
-            Admin Login?{" "}
-            <span
-              className="text-primary underline cursor-pointer"
-              onClick={() => setState("Admin")}
-            >
-              Click here
-            </span>
-          </p>
-        )}
+        <p>
+          {userRole === "Admin" ? "Doctor" : "Admin"} Login?{" "}
+          <span
+            className="text-primary underline cursor-pointer"
+            onClick={() =>
+              setUserRole((prev) => (prev === "Admin" ? "Doctor" : "Admin"))
+            }
+          >
+            Click here
+          </span>
+        </p>
       </div>
     </form>
   );

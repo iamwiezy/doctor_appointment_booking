@@ -84,16 +84,18 @@ const AllAppointments = () => {
                 <span className="text-red-500 font-medium text-sm">
                   Cancelled
                 </span>
+              ) : item.isCompleted ? (
+                <p className="text-green-500 font-medium text-sm">Completed</p>
               ) : (
                 <button
                   onClick={() => cancelAppointment(item._id)} // ✅ Wrapped in arrow function
-                  className="p-2 hover:bg-red-100 rounded-full transition"
+                  className="p-2 "
                   title="Cancel Appointment"
                 >
                   <img
                     src={assets.cancel_icon}
                     alt="Cancel"
-                    className="w-5 h-5"
+                    className="w-10 h-10"
                   />
                 </button>
               )}
