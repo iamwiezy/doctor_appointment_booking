@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#E6C211",
-        ternary: "#FFF9DB",
+        primary: "#2F80ED",
+        ternary: "#E3F0FF",
       },
       gridTemplateColumns: {
         auto: "repeat(auto-fill, minmax(200px, 1fr))",
