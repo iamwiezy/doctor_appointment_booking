@@ -1,0 +1,49 @@
+# === Node dependencies ===
+**/node_modules/
+
+# === Build outputs ===
+**/build/
+**/dist/
+
+# === React & Vite-specific ===
+frontend/.env
+frontend/.env.*              # Vite/CRA uses .env.local etc
+frontend/.DS_Store
+
+# === Admin panel (React or other frontend) ===
+admin/build/
+admin/dist/
+admin/.env
+admin/.env.*
+
+# === Backend (Express, etc.) ===
+backend/.env
+backend/.env.*
+backend/.DS_Store
+backend/logs/
+backend/tmp/
+backend/*.log
+
+# === Vercel/hosting config (local only) ===
+.vercel/
+
+# === Test coverage ===
+**/coverage/
+
+# === Logs ===
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# === OS-specific ===
+.DS_Store
+Thumbs.db
+
+# === IDEs ===
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
