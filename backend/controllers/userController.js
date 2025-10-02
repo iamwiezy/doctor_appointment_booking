@@ -196,7 +196,13 @@ const bookAppointment = async (req, res) => {
 const listAppointment = async (req, res) => {
   try {
     const { userId } = req.body;
-    const appointments = await appointmentModel.find({ userId });
+
+    // ✅ Add populate to get fresh patient and doctor data
+    const appointments = await appointmentModel
+      .find({ userId })
+      .populate("userData") // This fetches fresh patient data
+      .populate("docData") // This fetches fresh doctor data
+      .sort({ createdAt: -1 }); // Optional: sort by newest first
 
     res.json({ success: true, appointments });
   } catch (error) {
@@ -242,6 +248,151 @@ const cancelAppointment = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// API to get all patients (Admin only)
+const getAllPatients = async (req, res) => {
+  try {
+    const patients = await userModel.find({}).select("-password");
+    res.json({
+      success: true,
+      patients,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// API to get a single patient by ID (Admin only)
+const getPatientById = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    const patient = await userModel.findById(patientId).select("-password");
+
+    if (!patient) {
+      return res.json({
+        success: false,
+        message: "Patient not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      patient,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// API to update patient information (Admin only)
+const updatePatient = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const { name, email, phone, dob, gender, address } = req.body;
+    const imageFile = req.file;
+
+    // Check if patient exists
+    const patient = await userModel.findById(patientId);
+    if (!patient) {
+      return res.json({
+        success: false,
+        message: "Patient not found",
+      });
+    }
+
+    // Prepare update data
+    const updateData = {};
+
+    if (name) updateData.name = name;
+    if (email) {
+      // Validate email format
+      if (!validator.isEmail(email)) {
+        return res.json({
+          success: false,
+          message: "Enter a valid email",
+        });
+      }
+
+      // Check if email is already taken by another user
+      const existingUser = await userModel.findOne({
+        email,
+        _id: { $ne: patientId },
+      });
+      if (existingUser) {
+        return res.json({
+          success: false,
+          message: "Email is already registered",
+        });
+      }
+
+      updateData.email = email;
+    }
+    if (phone) updateData.phone = phone;
+    if (dob) updateData.dob = dob;
+    if (gender) updateData.gender = gender;
+    if (address) updateData.address = JSON.parse(address);
+
+    // Handle image upload
+    if (imageFile) {
+      const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
+        resource_type: "image",
+      });
+      updateData.image = imageUpload.secure_url;
+    }
+
+    // Update patient
+    await userModel.findByIdAndUpdate(patientId, updateData);
+
+    res.json({
+      success: true,
+      message: "Patient updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deletePatient = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    // Check if patient exists
+    const patient = await userModel.findById(patientId);
+    if (!patient) {
+      return res.json({
+        success: false,
+        message: "Patient not found",
+      });
+    }
+
+    // Delete the patient
+    await userModel.findByIdAndDelete(patientId);
+
+    res.json({
+      success: true,
+      message: "Patient deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

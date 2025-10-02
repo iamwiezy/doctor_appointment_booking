@@ -35,6 +35,7 @@ const doctorList = async (req, res) => {
 };
 
 // Doctor login
+// Doctor login - Updated for httpOnly cookies
 const loginDoctor = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -53,9 +54,52 @@ const loginDoctor = async (req, res) => {
         .json({ success: false, message: "Invalid Credentials" });
     }
 
-    const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET); // No expiry for testing
+    const token = jwt.sign(
+      { id: doctor._id, role: "doctor" },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
 
-    res.json({ success: true, token });
+    // ✅ Clear admin cookie first
+    res.clearCookie("adminToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
+
+    // Then set doctor cookie
+    res.cookie("doctorToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
+    res.json({
+      success: true,
+      message: "Doctor login successful",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Add logout function
+const logoutDoctor = async (req, res) => {
+  try {
+    res.clearCookie("doctorToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
+
+    res.json({
+      success: true,
+      message: "Doctor logged out successfully",
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -186,6 +230,7 @@ export {
   changeAvailability,
   doctorList,
   loginDoctor,
+  logoutDoctor,
   appointmentsDoctor,
   appointmentComplete,
   appointmentCancel,
