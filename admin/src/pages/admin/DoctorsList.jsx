@@ -9,7 +9,7 @@ const DoctorsList = () => {
     if (aToken) {
       getAllDoctors();
     }
-  }, [aToken]);
+  }, [aToken, getAllDoctors]);
   return (
     <div className="m-5 max-h-[90vh] overflow-y-scroll">
       <h1 className="text-xl font-medium">All Doctors </h1>
@@ -17,8 +17,7 @@ const DoctorsList = () => {
         {doctors.map((item, index) => (
           <div
             className="border border-ternary rounded-xl max-w-56 overflow-hidden cursor-pointer group shadow-sm"
-            key={index}
-          >
+            key={index}>
             <img
               className="bg-ternary group-hover:bg-primary transition-all duration-500"
               src={item.image}

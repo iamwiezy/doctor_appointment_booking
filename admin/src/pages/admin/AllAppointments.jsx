@@ -24,7 +24,7 @@ const AllAppointments = () => {
         {/* Header */}
         <div className="hidden sm:grid grid-cols-[0.5fr_2.5fr_1fr_2fr_2.5fr_1fr_1fr] px-6 py-3 text-zinc-500 font-medium border-b bg-zinc-50">
           <p>#</p>
-          <p>Patient</p>
+          <p>Patient Name</p>
           <p>Age</p>
           <p>Date & Time</p>
           <p>Doctor</p>
@@ -38,69 +38,73 @@ const AllAppointments = () => {
             No appointments available.
           </div>
         ) : (
-          appointments.map((item, index) => (
-            <div
-              key={item._id || index}
-              className="flex flex-wrap justify-between items-center sm:grid sm:grid-cols-[0.5fr_2.5fr_1fr_2fr_2.5fr_1fr_1fr] px-6 py-4 text-zinc-600 border-b hover:bg-zinc-50 transition"
-            >
-              <p className="max-sm:hidden">{index + 1}</p>
+          appointments
+            .slice() // ✅ makes a copy (avoids mutating original state)
+            .reverse()
+            .map((item, index) => (
+              <div
+                key={item._id || index}
+                className="flex flex-wrap justify-between items-center sm:grid sm:grid-cols-[0.5fr_2.5fr_1fr_2fr_2.5fr_1fr_1fr] px-6 py-4 text-zinc-600 border-b hover:bg-zinc-50 transition">
+                <p className="max-sm:hidden">{index + 1}</p>
 
-              <div className="flex items-center gap-3">
-                <img
-                  className="w-8 h-8 rounded-full object-cover"
-                  src={item?.userData?.image || ""}
-                  alt="patient"
-                />
-                <span className="font-medium text-zinc-700">
-                  {item?.userData?.name || "Unknown"}
-                </span>
-              </div>
+                <div className="flex items-center gap-3">
+                  {/* <img
+                    className="w-8 h-8 rounded-full object-cover"
+                    src={item?.userData?.image || ""}
+                    alt="patient"
+                  /> */}
+                  <span className="font-medium text-zinc-700">
+                    {item?.userData?.name || "Unknown"}
+                  </span>
+                </div>
 
-              <p className="max-sm:hidden">
-                {calculateAge(item?.userData?.dob) || "-"}
-              </p>
+                <p className="max-sm:hidden">
+                  {calculateAge(item?.userData?.dob) || "-"}
+                </p>
 
-              <p>
-                {slotDateFormat(item?.slotDate) || "-"}, {item?.slotTime || "-"}
-              </p>
+                <p>
+                  {slotDateFormat(item?.slotDate) || "-"},{" "}
+                  {item?.slotTime || "-"}
+                </p>
 
-              <div className="flex items-center gap-3">
-                <img
-                  className="w-8 h-8 rounded-full bg-gray-100 object-cover"
-                  src={item?.docData?.image || ""}
-                  alt="doctor"
-                />
-                <span className="font-medium text-zinc-700">
-                  {item?.docData?.name || "Unknown"}
-                </span>
-              </div>
-
-              <p className="font-semibold text-zinc-700">
-                {currency} {item?.docData?.fees || "0"}
-              </p>
-
-              {/* Cancel Button or Cancelled Status */}
-              {item?.cancelled ? (
-                <span className="text-red-500 font-medium text-sm">
-                  Cancelled
-                </span>
-              ) : item.isCompleted ? (
-                <p className="text-green-500 font-medium text-sm">Completed</p>
-              ) : (
-                <button
-                  onClick={() => cancelAppointment(item._id)} // ✅ Wrapped in arrow function
-                  className="p-2 "
-                  title="Cancel Appointment"
-                >
+                <div className="flex items-center gap-3">
                   <img
-                    src={assets.cancel_icon}
-                    alt="Cancel"
-                    className="w-10 h-10"
+                    className="w-8 h-8 rounded-full bg-gray-100 object-cover"
+                    src={item?.docData?.image || ""}
+                    alt="doctor"
                   />
-                </button>
-              )}
-            </div>
-          ))
+                  <span className="font-medium text-zinc-700">
+                    {item?.docData?.name || "Unknown"}
+                  </span>
+                </div>
+
+                <p className="font-semibold text-zinc-700">
+                  {currency} {item?.userData?.total || "0"}
+                </p>
+
+                {/* Cancel Button or Cancelled Status */}
+                {item?.cancelled ? (
+                  <span className="text-red-500 font-medium text-sm">
+                    Cancelled
+                  </span>
+                ) : item.isCompleted ? (
+                  <p className="text-green-500 font-medium text-sm">
+                    Completed
+                  </p>
+                ) : (
+                  <button
+                    onClick={() => cancelAppointment(item._id)} // ✅ Wrapped in arrow function
+                    className="p-2 "
+                    title="Cancel Appointment">
+                    <img
+                      src={assets.cancel_icon}
+                      alt="Cancel"
+                      className="w-10 h-10"
+                    />
+                  </button>
+                )}
+              </div>
+            ))
         )}
       </div>
     </div>

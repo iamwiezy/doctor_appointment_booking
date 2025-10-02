@@ -17,8 +17,7 @@ const Sidebar = () => {
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/admin-dashboard"}
-          >
+            to={"/admin-dashboard"}>
             <img src={assets.home_icon} alt="" />
             <p>Dashboard</p>
           </NavLink>
@@ -28,8 +27,7 @@ const Sidebar = () => {
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/all-appointments"}
-          >
+            to={"/all-appointments"}>
             <img src={assets.appointment_icon} alt="" />
             <p>Appointments</p>
           </NavLink>
@@ -39,8 +37,7 @@ const Sidebar = () => {
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/add-doctor"}
-          >
+            to={"/add-doctor"}>
             <img src={assets.add_icon} alt="" />
             <p>Add Doctor</p>
           </NavLink>
@@ -50,10 +47,29 @@ const Sidebar = () => {
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/doctor-list"}
-          >
+            to={"/add-patient"}>
+            <img src={assets.add_icon} alt="" />
+            <p>Add Patient</p>
+          </NavLink>
+          <NavLink
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
+              }`
+            }
+            to={"/doctor-list"}>
             <img src={assets.people_icon} alt="" />
             <p>Doctor Lists</p>
+          </NavLink>
+          <NavLink
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
+              }`
+            }
+            to={"/patients-list"}>
+            <img src={assets.people_icon} alt="" />
+            <p>Patient Lists</p>
           </NavLink>
         </ul>
       )}
@@ -66,8 +82,7 @@ const Sidebar = () => {
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/doctor-dashboard"}
-          >
+            to={"/doctor-dashboard"}>
             <img src={assets.home_icon} alt="" />
             <p className="hidden md:block">Dashboard</p>
           </NavLink>
@@ -77,8 +92,7 @@ const Sidebar = () => {
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/doctor-appointments"}
-          >
+            to={"/doctor-appointments"}>
             <img src={assets.appointment_icon} alt="" />
             <p className="hidden md:block">Appointments</p>
           </NavLink>
@@ -88,8 +102,7 @@ const Sidebar = () => {
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/doctor-profile"}
-          >
+            to={"/doctor-profile"}>
             <img src={assets.people_icon} alt="" />
             <p className="hidden md:block">Profile</p>
           </NavLink>
