@@ -5,10 +5,11 @@
     "type": "module",
 
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "server": "nodemon server.js"
-  },
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "build": "npm install --legacy-peer-deps",
+  "start": "node server.js",
+  "server": "nodemon server.js"
+},
   "author": "wiezy",
   "license": "ISC",
   "description": "",
@@ -29,5 +30,6 @@
     "validator": "^13.12.0"
   },
   "engines": {
-"node": "18.x"  }
+  "node": "20.x"  
+}
 }
