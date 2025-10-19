@@ -226,7 +226,7 @@ const updateDoctorProfile = async (req, res) => {
     console.error(error);
   }
 };
-export {
+export default {
   changeAvailability,
   doctorList,
   loginDoctor,

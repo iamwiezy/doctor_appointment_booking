@@ -738,7 +738,7 @@ const deletePatient = async (req, res) => {
   }
 };
 
-export {
+export default {
   addDoctor,
   loginAdmin,
   allDoctors,
